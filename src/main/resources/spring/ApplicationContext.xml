@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+    <!-- 扫描包 -->
+    <context:component-scan base-package="com.hfi">
+    </context:component-scan>
+
+
+    <!-- 加载资源文件 -->
+    <import resource="ApplicationContext-db.xml"/>
+    <!--<import resource="ApplicationContext-quartz.xml"/>
+<import resource="ApplicationContext-cache.xml"/>  -->
+
+
+
+
+    <bean id="configProperties"
+          class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="locations">
+            <list>
+                <value>classpath:config.properties</value>
+            </list>
+        </property>
+    </bean>
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PreferencesPlaceholderConfigurer">
+        <property name="properties" ref="configProperties" />
+    </bean>
+
+
+    <!-- 处理数据线程池 -->
+    <bean id="dataProcExecutor"
+          class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+        <!-- 线程池维护线程的最少数量 -->
+        <property name="corePoolSize" value="5"/>
+        <!-- 线程池维护线程的最大数量 -->
+        <property name="maxPoolSize" value="15"/>
+        <!-- 线程池所使用的缓冲队列 -->
+        <property name="queueCapacity" value="50"/>
+        <!-- 线程池维护线程所允许的空闲时间 -->
+        <property name="keepAliveSeconds" value="60"/>
+    </bean>
+
+
+
+
+
+</beans>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/util
+		http://www.springframework.org/schema/util/spring-util-3.0.xsd" >			
+
+	<!--====================作业调度 begin================== -->
+
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">			
+		<property name="triggers">
+			<list>
+				<!-- <ref bean="loadDataTrigger" /> -->
+			</list> 
+		</property>
+	</bean>
+	
+	<bean id="scheduler" class="com.hfi.test.etl.job.Scheduler">
+	</bean>
+	
+	
+	<!-- ====================载入源数据======================== -->
+	<bean id="loadDataTrigger" class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail" ref="loadDataJob" />
+		<property name="cronExpression" value="${quartz.loadSourceData}"/>
+	</bean>
+	
+	<bean id="loadDataJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="scheduler" />
+		<property name="targetMethod" value="loadSourceData" />
+		<property name="concurrent" value="false" />
+		<!-- 同一任务在前一次执行未完成而Trigger时间又到时是否并发开始新的执行,默认为true. -->
+	</bean>
+	
+	
+	<!--==============================================end quartz===================================================== -->
+</beans>
